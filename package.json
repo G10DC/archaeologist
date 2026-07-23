@@ -1,0 +1,14 @@
+{
+  "name": "archaeologist",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Git History, Churn & Hotspot Analyzer",
+  "main": "lib/archaeologist.js",
+  "bin": {
+    "archaeologist": "lib/archaeologist.js"
+  },
+  "scripts": {
+    "start": "node lib/archaeologist.js"
+  },
+  "license": "MIT"
+}
