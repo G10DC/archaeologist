@@ -39,3 +39,13 @@ Generates `archaeologist-report.md` containing:
 * Top 10 Technical Debt Hotspots
 * Temporal Coupling Matrix (Implicit Dependencies)
 * Ownership & Code Churn Heatmap
+
+
+---
+
+## ⚡ Spark Breakthrough Enhancement
+
+- **Feature**: **Predictive Technical Debt Radar**
+- **Description**: Analyzes commit velocity and coupling to predict which modules will break in future iterations.
+- **Synergy**: Integrated with `trellis` (reachability graph) & `pulse` (quality score).
+- **Framework**: Applied via the `spark` 4-Lens Lateral Ideation Engine.
