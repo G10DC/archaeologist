@@ -1,6 +1,12 @@
 ---
 name: archaeologist
-description: Git History, Churn & Hotspot Analyzer for multi-GB repositories. Streams Git commit packfiles in memory (zero checkout) to calculate temporal coupling, line survival, and technical debt hotspots. Inspired by Code Maat and Hercules.
+description: >-
+  Git history, churn and hotspot analyzer for large repositories. Streams Git
+  commit history to calculate temporal coupling, line survival curves, and
+  technical debt hotspots. Use when identifying which files change together most
+  frequently or which modules accumulate the most churn. Never use for current
+  dependency analysis -- use trellis instead; never use for blame attribution or
+  performance profiling.
 ---
 
 # 🏺 Archaeologist
