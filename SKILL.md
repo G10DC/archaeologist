@@ -31,7 +31,7 @@ graph TD
 
 ### 1. Run Hotspot & Churn Audit
 ```bash
-node C:/Users/GdC/.gemini/config/skills/archaeologist/lib/archaeologist.js --repo "." --months 6
+node lib/archaeologist.js --repo "." --months 6
 ```
 
 ### 2. Output
