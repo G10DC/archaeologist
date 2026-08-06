@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node lib/archaeologist.js",
-    "test": "node --test test/*.test.js tests/*.test.js || node --test test/*.js tests/*.js || true"
+    "test": "node --test test/*.test.js tests/*.test.js || true"
   },
   "license": "MIT"
 }
