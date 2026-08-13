@@ -1,67 +1,44 @@
 ---
 name: archaeologist
+status: implemented
 description: >-
-  Git history, churn and hotspot analyzer for large repositories. Streams Git
-  commit history to calculate temporal coupling, line survival curves, and
-  technical debt hotspots. Use when identifying which files change together most
-  frequently or which modules accumulate the most churn. Never use for current
-  dependency analysis -- use trellis instead; never use for blame attribution or
-  performance profiling.
+  Git commit-touch-frequency counter. Shells out to `git log --name-only` over
+  the last N commits and ranks files by how often they appear, as a raw churn
+  proxy. Use for a quick "which files change most often" signal from git
+  history. Never use for dependency analysis -- use trellis; never expect
+  temporal coupling or complexity-weighted hotspots -- neither is computed.
 ---
 
 # Archaeologist
 
-**Git History, Churn & Hotspot Analyzer.** Archaeologist mines Git VCS history to discover architectural hotspots, co-change temporal coupling, and developer ownership without checking out raw files to disk.
+**Git commit-touch-frequency counter.** Runs `git log --name-only --oneline -n <limit>` and counts how many of the last N commits touched each file. That count is the entire signal — a raw churn proxy, not a weighted hotspot score.
 
-## Golden Rules
-1. **Zero-checkout streaming**: Parse Git packfiles (`.pack`/`.idx`) directly in memory via `libgit2` / `go-git` to avoid disk I/O bottlenecks.
-2. **Identify Temporal Coupling ($P(A \cap B)$)**: Flag files that frequently change together in the same commits across separate directories.
-3. **Hotspot Matrix ($Complexity \times Churn$)**: Highlight files with high cyclomatic/indentation complexity combined with high commit revision frequency.
-4. **Code Survival Curves**: Track code churn over time to detect fragile areas prone to regressions.
+## What it actually does
+Shells out to `git log` (default `-n 100`) via `execSync` — a real history read, not a mock —
+splits it into commits, counts file occurrences, returns the top 20 by raw touch count.
 
-## ️ Architecture & Pipeline
+## What it does not do (despite what the name suggests)
+- **No temporal coupling** — doesn't detect files that change together in the same commit.
+- **No complexity weighting** — churn isn't combined with cyclomatic complexity or any other metric.
+- **No ownership or survival-curve data** — no author attribution, no time-series decay.
+- **No packfile streaming** — shells out to `git`; doesn't parse `.pack`/`.idx` itself.
 
-```mermaid
-graph TD
-    A[Git Packfile / Commit Stream] --> B[Zero-Checkout In-Memory Parser]
-    B --> C[Extract Commit Deltas]
-    C --> D1[Compute Churn Rates]
-    C --> D2[Compute Co-Change Matrix]
-    C --> D3[Compute Ownership Heatmap]
-    D1 --> E[Archaeologist Risk Report & Hotspot Map]
-    D2 --> E
-    D3 --> E
+## Usage (library, not a CLI)
+
+```js
+import { ArchaeologistAnalyzer } from './lib/archaeologist.js';
+
+const result = new ArchaeologistAnalyzer().analyzeGitHistory('/path/to/repo', 200);
+// result.hotspots: [{ file, churn }, ...] top 20 by touch count
 ```
-
-## Usage Guide
-
-### 1. Run Hotspot & Churn Audit
-```bash
-node lib/archaeologist.js --repo "." --months 6
-```
-
-### 2. Output
-Generates `archaeologist-report.md` containing:
-* Top 10 Technical Debt Hotspots
-* Temporal Coupling Matrix (Implicit Dependencies)
-* Ownership & Code Churn Heatmap
-
-
----
-
-## Spark Breakthrough Enhancement
-
-- **Feature**: **Predictive Technical Debt Radar**
-- **Description**: Analyzes commit velocity and coupling to predict which modules will break in future iterations.
-- **Synergy**: Integrated with `trellis` (reachability graph) & `pulse` (quality score).
-- **Framework**: Applied via the `spark` 4-Lens Lateral Ideation Engine.
-
 
 ## When to use
 
-- Primary domain workflow execution as specified in frontmatter description.
-
+- A fast, approximate "which files changed most in the last N commits" signal, as one input
+  among several before deciding where to focus a refactor.
 
 ## When NOT to use
 
-- Tasks outside declared skill scope or handled by specialized sibling skills.
+- **Files that change *together*** (temporal coupling) — not computed anywhere in this repo.
+- **Complexity-weighted hotspots or ownership data** — not available.
+- **Current dependency reachability, not historical churn** → use `trellis`.
